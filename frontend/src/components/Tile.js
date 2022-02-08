@@ -1,8 +1,11 @@
 import React from 'react'
 
-const Tile = (props, eventHandler) => {
+const Tile = (props) => {
+	const sendAction = (index) => {
+		props.sendMessage(index)
+	}
 	return (
-		<button onClick={eventHandler}>{props.val}</button>
+		<button onClick={()=>sendAction(parseInt(props.index))}>{props.val}</button>
 	)
 }
 

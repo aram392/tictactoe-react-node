@@ -4,12 +4,16 @@
   "description": "My plan is to create a React frontend with Node backend for the game logic. I havent worked with websockets so this will be the challenge of this project. I intend to get something working but will submit the progress if it takes longer than expected",
   "main": "index.js",
   "scripts": {
-    "frontend":"npm --prefix ./frontend start",
-    "server":"cd server && node index.js",
-    "setup-game":"npm --prefix ./client install && npm --prefix ./server install",
+    "frontend": "npm --prefix ./frontend start",
+    "server": "cd server && node index.js",
+    "dev-server": "cd server && nodemon index.js",
+    "setup-game": "npm --prefix ./client install && npm --prefix ./server install",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "tic-tac-toe-detect-winner": "^1.0.2"
+  }
 }

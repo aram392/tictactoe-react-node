@@ -1,7 +1,7 @@
 import React from 'react'
 import Tile from './Tile'
 
-const Board = ({boardTiles,joinHandler,buttonHandler}) => {
+const Board = ({boardTiles,sendMessage}) => {
   const style = {
     width: "250px",
     height: "250px",
@@ -9,14 +9,14 @@ const Board = ({boardTiles,joinHandler,buttonHandler}) => {
     display: "grid",
     gridTemplate: "repeat(3, 1fr) / repeat(3, 1fr)",
   };
+
   return (
     <div style={style}>
-        {boardTiles.map(tile=>{
+        {boardTiles.map((tile,i)=>{
           return(
-          <Tile className='tile' val={tile}></Tile>
+          <Tile className='tile' val={tile} key={i} index={i} sendMessage={sendMessage}></Tile>
           )
         })}
-        <button onClick={joinHandler}>Join The Game!</button>
     </div>
   )
 }
