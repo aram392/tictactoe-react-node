@@ -1,3 +1,9 @@
 .App {
   text-align: center;
 }
+
+.App button{
+  background: rgb(201,198,249);
+  background: linear-gradient(90deg, rgba(201,198,249,1) 0%, rgba(152,150,152,1) 58%);
+  font-size: 1.5rem;
+}

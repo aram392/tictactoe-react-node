@@ -28,8 +28,11 @@ const checkBoard = (b,t) =>{
   return false  
 }
 
+
 io.on('connection', (socket) => {
   console.log(socket.id+' connected');
+  socket.emit('board',board)
+  socket.emit('turn',turn)
   if (player1===undefined){
     player1=socket.id
     turn=player1
@@ -37,30 +40,70 @@ io.on('connection', (socket) => {
     console.log(turn===socket.id)
   }else if(player2===undefined){
     player2=socket.id
+    io.emit('turn',turn)
   }else{
     console.log("more than 3 players trying to connect")
   }
+  if ((player1===undefined || player2===undefined)){
+    game='waiting'
+    io.emit('game',game)
+  }else{
+    game='playing'
+    io.emit('game',game)
+  }
+  console.log("game status",game)
+
   socket.on('reset',()=>{
     player1=undefined
     player1=undefined
     turn=undefined
-    game="playing"
+    game="disconnected"
     board=Array(9).fill(" ");
     console.log("reset players")
-    socket.emit('board',board)
+    io.emit('game',game)
+    io.emit('turn',turn)
+    io.emit('board',board)
+    io.disconnectSockets();
+  })
+
+  socket.on('restart',()=>{
+    turn=player1
+    game="playing"
+    
+    board=Array(9).fill(" ");
+    console.log("restarted game")
+    io.emit('game',game)
+    io.emit('board',board)
+    io.emit('turn',turn)
   })
 
   socket.on('disconnect', () => {
     if(socket.id===player1){
       console.log("player1" + socket.id + " left")
+      if(turn===player1){
+        turn=player2
+        io.emit('turn',turn)
+      }
       player1=undefined
     }else if(socket.id===player2){
       console.log("player2" + socket.id+" left")
+      if(turn===player2){
+        turn=player1
+        io.emit('turn',turn)
+      }
       player2=undefined
     }else{
       console.log(socket.id+" left")
     }
-    
+    if (player1=== undefined && player2===undefined){
+      game="disconnected"
+    }else{
+      game="waiting"
+    }
+    board=Array(9).fill(" ");
+    io.emit('board',board)
+    io.emit('turn',turn)
+    io.emit('game',game)
   });
 
   socket.on('my message', (msg) => {
@@ -73,17 +116,33 @@ io.on('connection', (socket) => {
     if (player1!==undefined && player2!==undefined){
       if(socket.id===turn){
         console.log("match")
-        if(board[msg]!=='x'||'o'){
-          board[parseInt(msg.message)]= (turn===player1) ? "x" : "o";
+        console.log(socket.id,turn,socket.id===turn)
+        console.log(msg.message,parseInt(msg.message),board,board[parseInt(msg.message)])
+        if(board[parseInt(msg.message)]===undefined || board[parseInt(msg.message)]=== ' '){
+          board[parseInt(msg.message)]= (turn===player1) ? 'x' : 'o';
           io.emit('board',board)
-          if(checkBoard(board,(turn===player1) ? "x" : "o")){
+          var count=0
+          board.forEach(e=> (e==='o'||e==='x')?count++:console.log(count))
+          console.log(count);
+          if(checkBoard(board,(turn===player1) ? 'x' : 'o')){
+            game=`Winner is ${turn}!`
             io.emit('game',`Winner is ${turn}!`)
+            turn='No more turns allowed. Press Restart'
+            io.emit('turn',turn)
+            console.log(turn)
           }
-          else if (!board.includes(" ")){
-            io.emit('game',"Draw")
+          else if (count===9){
+            game="Draw"
+            io.emit('game',game)
+            turn='No more turns allowed. Press Restart'
+            io.emit('turn',turn)
           }
-          turn = (turn===player1) ? player2 : player1
-          io.emit('turn',turn)
+          if(!(turn==='No more turns allowed. Press Restart')){
+            turn = (turn===player1) ? player2 : player1
+            io.emit('turn',turn)
+          }
+          console.log(board)
+          console.log(board.length)
         }
       }
     }
