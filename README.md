@@ -12,7 +12,7 @@ For running the client and server. (may need a "npm install" in the frontend and
 The Frontend will be accessable from localhost:3000.
 The Backend will be on localhost:3032
 
-**## Thoughts on project UPDATED**
+## Thoughts on project UPDATED
 I went back to learn websockets and implemented a working version.
 It was a smart idea to build the frontend with the expectation of events. This allowed minimal editing when I integrated web sockets.
 
